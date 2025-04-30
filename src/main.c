@@ -1,7 +1,6 @@
 
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
-extern uint32_t SystemCoreClock;
 typedef struct LEDNode {
     uint16_t pinMask;
     struct LEDNode *next;
@@ -9,7 +8,7 @@ typedef struct LEDNode {
 
 static void Delay(volatile uint32_t cnt)
 {
-	//whilein içinde parametre olarak atadýðým 32bitlik count integerinin 1er 1er azaltýlarak bir delay fonksiyonu oluþturulmasý
+	//whilein iï¿½inde parametre olarak atadï¿½ï¿½ï¿½m 32bitlik count integerinin 1er 1er azaltï¿½larak bir delay fonksiyonu oluï¿½turulmasï¿½
     while (cnt--) __NOP();
 }
 void RCC_Config(void)
@@ -17,8 +16,8 @@ void RCC_Config(void)
     // 8 000 000 -> 168 000 000
 
     RCC->CR &= ~(1 << 0);          // HSI kapat
-    RCC->CR |=  (1 << 16);         // HSE aç
-    while(!(RCC->CR & (1 << 17))); // HSE aktif olmasýný bekle
+    RCC->CR |=  (1 << 16);         // HSE aï¿½
+    while(!(RCC->CR & (1 << 17))); // HSE aktif olmasï¿½nï¿½ bekle
     RCC->CR |=  (1 << 19);         //saat koruma sistemi
 
     RCC->PLLCFGR = 0x00000000;     // PLLCFGR reset
@@ -27,9 +26,9 @@ void RCC_Config(void)
     RCC->PLLCFGR |= (168 << 6);    // PLL N = 168
 
     RCC->CR |= (1 << 24);          // PLL ON
-    while(!(RCC->CR & (1 << 25))); // PLL aktif olmasýný bekle
+    while(!(RCC->CR & (1 << 25))); // PLL aktif olmasï¿½nï¿½ bekle
 
-    RCC->CFGR &= ~(1 << 0);        // sistem saatini sýfýrla
+    RCC->CFGR &= ~(1 << 0);        // sistem saatini sï¿½fï¿½rla
     RCC->CFGR |=  (1 << 1);        // System Clock is PLL
 
     while(!(RCC->CFGR & (1 << 1))); // Select system clock is PLL clock
@@ -57,7 +56,7 @@ void GPIO_Config(void)
 	GPIOD->MODER &= ~(1<<31);
 
 
-	//Diðer Push Pull vs her þey default kalacak ve alttaki bitwise kodu GPIOD port speedini very high olarak ayarlayacak
+	//Diï¿½er Push Pull vs her ï¿½ey default kalacak ve alttaki bitwise kodu GPIOD port speedini very high olarak ayarlayacak
 	GPIOD->OSPEEDR |= (1<<24) | (1<<25) | (1<<26) | (1<<27) | (1<<28) | (1<<29) | (1<<30) | (1<<31);
 
 }
@@ -68,7 +67,7 @@ int main(void)
 	RCC_Config();
 	SystemCoreClockUpdate();
 	GPIO_Config();
-    //Led halkasýnýn kurulduðu kýsým 12-13-14-15-12
+    //Led halkasï¿½nï¿½n kurulduï¿½u kï¿½sï¿½m 12-13-14-15-12
     LEDNode led12 = { .pinMask = (1 << 12) };
     LEDNode led13 = { .pinMask = (1 << 13) };
     LEDNode led14 = { .pinMask = (1 << 14) };
@@ -86,9 +85,9 @@ int main(void)
 
       GPIOD->ODR |=  current->pinMask;   // yak
       Delay(1600000);
-      GPIOD->ODR &= ~current->pinMask;   // söndür
+      GPIOD->ODR &= ~current->pinMask;   // sï¿½ndï¿½r
       Delay(1600000);
-      current = current->next;           // sýradaki LED
+      current = current->next;           // sï¿½radaki LED
 
 
   }
