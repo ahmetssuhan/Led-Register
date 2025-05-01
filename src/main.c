@@ -1,10 +1,25 @@
 
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
-typedef struct LEDNode {
+
+typedef struct LEDNode 
+{
     uint16_t pinMask;
     struct LEDNode *next;
 } LEDNode;
+
+LEDNode* createLEDNode(uint16_t pinMask)
+{
+
+	//bir led nod yapısı oluştur
+    LEDNode* node = (LEDNode*)malloc(sizeof(LEDNode));
+    if (node != NULL)
+    {
+        node->pinMask = pinMask;
+        node->next = NULL;
+    }
+    return node;
+}
 
 static void Delay(volatile uint32_t cnt)
 {
@@ -68,26 +83,30 @@ int main(void)
 	SystemCoreClockUpdate();
 	GPIO_Config();
     //Led halkas�n�n kuruldu�u k�s�m 12-13-14-15-12
-    LEDNode led12 = { .pinMask = (1 << 12) };
-    LEDNode led13 = { .pinMask = (1 << 13) };
-    LEDNode led14 = { .pinMask = (1 << 14) };
-    LEDNode led15 = { .pinMask = (1 << 15) };
+    LEDNode* led12 = createLEDNode(1 << 12);
+    LEDNode* led13 = createLEDNode(1 << 13);
+    LEDNode* led14 = createLEDNode(1 << 14);
+    LEDNode* led15 = createLEDNode(1 << 15);
 
-    led12.next = &led13;
-    led13.next = &led14;
-    led14.next = &led15;
-    led15.next = &led12;
 
+    //sonraki lede geçiş
+    led12->next = led13;
+    led13->next = led14;
+    led14->next = led15;
+    led15->next = led12; //led 15in sonraki değerini led12 ye bağlayarak bir halka oluşturdum
+
+	    //başlangıç ledinin led12 olarak atanması
     LEDNode *current = &led12;
   while (1)
   {
 
 
-      GPIOD->ODR |=  current->pinMask;   // yak
-      Delay(1600000);
-      GPIOD->ODR &= ~current->pinMask;   // s�nd�r
-      Delay(1600000);
-      current = current->next;           // s�radaki LED
+
+      GPIOD->ODR |=  current->pinMask;   // yak flag = 1
+      Delay(6400000);
+      GPIOD->ODR &= ~current->pinMask;   // söndür flag = 0
+      Delay(6400000);
+      current = current->next;           // sıradaki LED
 
 
   }
